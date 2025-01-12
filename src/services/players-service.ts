@@ -1,15 +1,28 @@
+import { PlayerModel } from "../models/player-model";
 import * as PlayerRepository from "../repositories/players-repository";
-import { noContent, ok } from "../utils/http-helper";
+import * as HttpResponse from "../utils/http-helper";
 
 export const getPlayerService = async () => {
     const data = await PlayerRepository.findAllPlayers();
-    let response = null;
+    return responseContent(data)
+}
 
-    if(data){
-        response = await ok(data)
-    } else {
-        response = await noContent();
+export const getPlayersByIdService = async (id: number) => {
+    const data = await PlayerRepository.findPlayerById(id);
+    return responseContent(data)
+}
+
+export const createPlayerService = async (player: PlayerModel) => {
+    if (Object.keys(player).length === 0) return HttpResponse.badRequest("Dados inválidos. Verifique os campos enviados.")
+    const data = await PlayerRepository.insertPlayer(player);
+    return responseContent(data)
+}
+
+const responseContent = async (data: any) => {
+    if (!data){
+        return await HttpResponse.noContent();
     }
 
-    return response
+    return HttpResponse.ok(data) || null;
+
 }
