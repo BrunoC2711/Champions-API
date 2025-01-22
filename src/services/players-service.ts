@@ -18,6 +18,18 @@ export const createPlayerService = async (player: PlayerModel) => {
     return responseContent(data)
 }
 
+export const deletePlayerService = async (id: number) => {
+    const data = await PlayerRepository.deleteOnePlayer(id);
+    if (!data) return HttpResponse.badRequest("Dados inválidos. Verifique os campos enviados.")
+    return responseContent(data)
+}
+
+export const updatePlayerService = async (id: number, newDataPlayer: Partial<PlayerModel>) => {
+    const data = await PlayerRepository.findAndModifyPlayer(id, newDataPlayer);
+    if (!data) return HttpResponse.badRequest("Dados inválidos. Verifique os campos enviados.")
+    return responseContent(data)
+}
+
 const responseContent = async (data: any) => {
     if (!data){
         return await HttpResponse.noContent();
